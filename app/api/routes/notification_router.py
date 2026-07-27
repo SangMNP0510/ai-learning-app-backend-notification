@@ -195,6 +195,7 @@ async def mark_read(
     ),
 
 ):
+    print("PATCH:", notification_id)
 
     await service.mark_read(
 
@@ -251,6 +252,7 @@ async def delete_notification(
     ),
 
 ):
+    print("DELETE:", notification_id)
 
     await service.delete(
 
