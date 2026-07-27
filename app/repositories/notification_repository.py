@@ -75,9 +75,11 @@ class NotificationRepository:
 
         now = datetime.now(timezone.utc)
 
-        notification_ref.document().set(
+        doc = notification_ref.document()
+
+        doc.set(
             {
-                "id": str(uuid.uuid4()),
+                "id": doc.id,
                 "user_id": user_id,
                 "title": "Chào mừng đến với Learnix",
                 "body": "Cảm ơn bạn đã sử dụng ứng dụng.",
