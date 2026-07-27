@@ -44,28 +44,36 @@ class NotificationModel(BaseModel):
     def to_firestore(self):
 
         return {
-            "id": self.id,
+
             "user_id": self.user_id,
+
             "title": self.title,
+
             "body": self.body,
+
             "type": self.type.value,
+
             "priority": self.priority.value,
+
             "image": self.image,
+
             "action": (
                 self.action.value
                 if self.action
                 else None
             ),
+
             "deeplink": self.deeplink,
+
             "action_data": self.action_data,
+
             "is_read": self.is_read,
-            "created_at": self.created_at.astimezone(timezone.utc),
-            "updated_at": self.updated_at.astimezone(timezone.utc),
-            "expire_at": (
-                self.expire_at.astimezone(timezone.utc)
-                if self.expire_at
-                else None
-            ),
+
+            "created_at": self.created_at,
+
+            "updated_at": self.updated_at,
+
+            "expire_at": self.expire_at,
         }
 
     @classmethod

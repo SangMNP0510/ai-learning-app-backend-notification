@@ -78,22 +78,21 @@ class NotificationRepository:
         doc = notification_ref.document()
 
         doc.set(
-            {
-                "id": doc.id,
-                "user_id": user_id,
-                "title": "Chào mừng đến với Learnix",
-                "body": "Cảm ơn bạn đã sử dụng ứng dụng.",
-                "type": "SYSTEM",
-                "priority": "NORMAL",
-                "image": None,
-                "action": None,
-                "action_data": {},
-                "deeplink": None,
-                "is_read": False,
-                "created_at": now,
-                "updated_at": now,
-                "expire_at": None,
-            }
+        {
+            "user_id": user_id,
+            "title": "Chào mừng đến với Learnix",
+            "body": "Cảm ơn bạn đã sử dụng ứng dụng.",
+            "type": "SYSTEM",
+            "priority": "NORMAL",
+            "image": None,
+            "action": None,
+            "action_data": {},
+            "deeplink": None,
+            "is_read": False,
+            "created_at": now,
+            "updated_at": now,
+            "expire_at": None,
+        }
         )
 
         user_ref.set(
@@ -141,10 +140,12 @@ class NotificationRepository:
 
             return None
 
-        notification = (
-            NotificationModel.from_firestore(
-                doc.to_dict(),
-            )
+        data = doc.to_dict()
+
+        data["id"] = doc.id
+
+        notification = NotificationModel.from_firestore(
+            data,
         )
 
         now = datetime.now(
@@ -201,10 +202,12 @@ class NotificationRepository:
 
         for doc in docs:
 
-            notification = (
-                NotificationModel.from_firestore(
-                    doc.to_dict(),
-                )
+            data = doc.to_dict()
+
+            data["id"] = doc.id
+
+            notification = NotificationModel.from_firestore(
+                data,
             )
 
             if (
