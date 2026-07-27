@@ -52,52 +52,64 @@ class NotificationRepository:
         if "notification_unread" not in data:
             updates["notification_unread"] = 0
 
+        if "notification_initialized" not in data:
+            updates["notification_initialized"] = False
+
         if updates:
             user_ref.set(
                 updates,
                 merge=True,
             )
-
-        # -------------------------
-        # Tự tạo notification đầu tiên nếu chưa có
-        # -------------------------
-
-        notification_ref = (
-            user_ref.collection(self.NOTIFICATIONS)
+            
+    async def create_welcome_notification(
+        self,
+        user_id: str,
+    ):
+        user_ref = (
+            db.collection(self.USERS)
+            .document(user_id)
         )
 
-        docs = list(
-            notification_ref.limit(1).stream()
-        )
+        user_doc = user_ref.get()
 
-        if docs:
+        if not user_doc.exists:
+            return
+
+        data = user_doc.to_dict() or {}
+
+        if data.get("notification_initialized", False):
             return
 
         now = datetime.now(timezone.utc)
 
-        doc = notification_ref.document()
+        doc = (
+            user_ref
+            .collection(self.NOTIFICATIONS)
+            .document()
+        )
 
         doc.set(
-        {
-            "user_id": user_id,
-            "title": "Chào mừng đến với Learnix",
-            "body": "Cảm ơn bạn đã sử dụng ứng dụng.",
-            "type": "SYSTEM",
-            "priority": "NORMAL",
-            "image": None,
-            "action": None,
-            "action_data": {},
-            "deeplink": None,
-            "is_read": False,
-            "created_at": now,
-            "updated_at": now,
-            "expire_at": None,
-        }
+            {
+                "user_id": user_id,
+                "title": "Chào mừng đến với Learnix",
+                "body": "Cảm ơn bạn đã sử dụng ứng dụng.",
+                "type": "SYSTEM",
+                "priority": "NORMAL",
+                "image": None,
+                "action": None,
+                "action_data": {},
+                "deeplink": None,
+                "is_read": False,
+                "created_at": now,
+                "updated_at": now,
+                "expire_at": None,
+            }
         )
 
         user_ref.set(
             {
                 "notification_unread": firestore.Increment(1),
+                "notification_initialized": True,
             },
             merge=True,
         )
@@ -170,6 +182,10 @@ class NotificationRepository:
         await self.ensure_notification_fields(
             user_id,
         )
+        
+        await self.create_welcome_notification(
+            user_id,
+        )
 
         query = (
             self._collection(
@@ -236,6 +252,10 @@ class NotificationRepository:
     ):
 
         await self.ensure_notification_fields(
+            user_id,
+        )
+        
+        await self.create_welcome_notification(
             user_id,
         )
 
