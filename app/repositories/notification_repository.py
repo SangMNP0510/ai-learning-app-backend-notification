@@ -6,6 +6,7 @@ from firebase_admin import firestore
 from app.config.firebase import db
 
 from app.models.notification import NotificationModel
+import uuid
 
 
 class NotificationRepository:
@@ -34,37 +35,71 @@ class NotificationRepository:
         self,
         user_id: str,
     ):
-
-        ref = (
-            db.collection(
-                self.USERS,
-            )
-            .document(
-                user_id,
-            )
+        user_ref = (
+            db.collection(self.USERS)
+            .document(user_id)
         )
 
-        doc = ref.get()
+        user_doc = user_ref.get()
 
-        if not doc.exists:
+        if not user_doc.exists:
             return
 
-        data = doc.to_dict()
+        data = user_doc.to_dict() or {}
 
         updates = {}
 
         if "notification_unread" not in data:
-
-            updates[
-                "notification_unread"
-            ] = 0
+            updates["notification_unread"] = 0
 
         if updates:
-
-            ref.set(
+            user_ref.set(
                 updates,
                 merge=True,
             )
+
+        # -------------------------
+        # Tự tạo notification đầu tiên nếu chưa có
+        # -------------------------
+
+        notification_ref = (
+            user_ref.collection(self.NOTIFICATIONS)
+        )
+
+        docs = list(
+            notification_ref.limit(1).stream()
+        )
+
+        if docs:
+            return
+
+        now = datetime.now(timezone.utc)
+
+        notification_ref.document().set(
+            {
+                "id": str(uuid.uuid4()),
+                "user_id": user_id,
+                "title": "Chào mừng đến với Learnix",
+                "body": "Cảm ơn bạn đã sử dụng ứng dụng.",
+                "type": "SYSTEM",
+                "priority": "NORMAL",
+                "image": None,
+                "action": None,
+                "action_data": {},
+                "deeplink": None,
+                "is_read": False,
+                "created_at": now,
+                "updated_at": now,
+                "expire_at": None,
+            }
+        )
+
+        user_ref.set(
+            {
+                "notification_unread": firestore.Increment(1),
+            },
+            merge=True,
+        )
 
     async def create(
         self,
