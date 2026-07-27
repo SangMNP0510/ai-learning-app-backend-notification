@@ -1,0 +1,24 @@
+from enum import Enum
+
+
+class NotificationAction(str, Enum):
+
+    OPEN_FLASHCARD = "OPEN_FLASHCARD"
+
+    OPEN_DOCUMENT = "OPEN_DOCUMENT"
+
+    OPEN_PAYMENT = "OPEN_PAYMENT"
+
+    OPEN_PROFILE = "OPEN_PROFILE"
+
+    OPEN_PREMIUM = "OPEN_PREMIUM"
+
+    OPEN_QUIZ = "OPEN_QUIZ"
+
+    OPEN_SUMMARY = "OPEN_SUMMARY"
+
+    OPEN_RANKING = "OPEN_RANKING"
+
+    OPEN_CHAT = "OPEN_CHAT"
+
+    NONE = "NONE"
