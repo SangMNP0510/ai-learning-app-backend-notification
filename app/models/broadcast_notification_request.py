@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
-class BroadcastRequest(BaseModel):
+class BroadcastNotificationRequest(BaseModel):
     title: str
     body: str

@@ -7,8 +7,8 @@ from app.models.common_response import (
     ApiResponse,
 )
 
-from app.models.broadcast_request import (
-    BroadcastRequest,
+from app.models.broadcast_notification_request import (
+    BroadcastNotificationRequest,
 )
 
 from app.models.register_notification_token_request import (
@@ -368,14 +368,17 @@ async def unregister_token(
     
 @router.post("/broadcast")
 async def broadcast(
-    request: BroadcastRequest,
+    request: BroadcastNotificationRequest,
     service: NotificationService = Depends(
         get_notification_service,
     ),
 ):
+
     await service.broadcast(
         title=request.title,
         body=request.body,
     )
 
-    return ApiResponse(success=True)
+    return ApiResponse(
+        success=True,
+    )
