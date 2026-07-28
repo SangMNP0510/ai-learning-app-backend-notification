@@ -44,6 +44,10 @@ class FcmService:
             ttl=ttl,
 
             collapse_key=collapse_key,
+            notification=messaging.AndroidNotification(
+                channel_id="default_channel",
+                sound="default",
+            )
         )
 
     def _build_apns_config(self):
