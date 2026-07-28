@@ -12,3 +12,5 @@ uploads/
 credentials/
 .firebase/
 firebase/firebase-service-account.json
+
+.admin
