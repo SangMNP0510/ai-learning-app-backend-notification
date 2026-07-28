@@ -210,36 +210,27 @@ class FcmService:
 
                 return None
 
-            android_config = self._build_android_config(
+            # BƯỚC 1: Gộp title và body vào chung gói data
+            payload_data = {
+                "title": title,
+                "body": body,
+            }
+            if data:
+                payload_data.update(data)
 
-                priority,
-
-                ttl,
-
-                collapse_key,
-            )
-
+            android_config = self._build_android_config(priority, ttl, collapse_key)
             apns_config = self._build_apns_config()
 
             message = messaging.MulticastMessage(
-
                 tokens=tokens,
-
-                notification=self._build_notification(
-
-                    title,
-
-                    body,
-                ),
-
+                # BƯỚC 2: Tắt dòng notification này đi (RẤT QUAN TRỌNG)
+                # notification=self._build_notification(title, body),
+                
                 android=android_config,
-
                 apns=apns_config,
-
-                data=self._sanitize_data(
-
-                    data,
-                ),
+                
+                # BƯỚC 3: Truyền gói data đã gộp vào
+                data=self._sanitize_data(payload_data),
             )
 
             response = messaging.send_each_for_multicast(
@@ -285,36 +276,27 @@ class FcmService:
 
         try:
 
-            android_config = self._build_android_config(
+            # BƯỚC 1: Gộp title và body vào chung gói data
+            payload_data = {
+                "title": title,
+                "body": body,
+            }
+            if data:
+                payload_data.update(data)
 
-                priority,
-
-                ttl,
-
-                collapse_key,
-            )
-
+            android_config = self._build_android_config(priority, ttl, collapse_key)
             apns_config = self._build_apns_config()
 
             message = messaging.Message(
-
                 topic=topic,
-
-                notification=self._build_notification(
-
-                    title,
-
-                    body,
-                ),
-
+                # BƯỚC 2: Tắt dòng notification
+                # notification=self._build_notification(title, body),
+                
                 android=android_config,
-
                 apns=apns_config,
-
-                data=self._sanitize_data(
-
-                    data,
-                ),
+                
+                # BƯỚC 3: Truyền gói data
+                data=self._sanitize_data(payload_data),
             )
 
             response = messaging.send(
