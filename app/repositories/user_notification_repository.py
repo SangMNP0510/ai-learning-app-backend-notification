@@ -445,3 +445,7 @@ class UserNotificationRepository:
         await self.save(
             model,
         )
+    
+    async def get_all_user_ids(self):
+        docs = db.collection(self.COLLECTION).stream()
+        return [doc.id for doc in docs]

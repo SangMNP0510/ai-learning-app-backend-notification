@@ -361,3 +361,18 @@ async def unregister_token(
         success=True,
 
     )
+    
+@router.post("/broadcast")
+async def broadcast(
+    service: NotificationService = Depends(
+        get_notification_service,
+    ),
+):
+    await service.broadcast(
+        title="Thông báo",
+        body="Server bảo trì lúc 22h",
+    )
+
+    return ApiResponse(
+        success=True,
+    )

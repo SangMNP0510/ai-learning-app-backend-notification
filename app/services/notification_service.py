@@ -247,6 +247,35 @@ class NotificationService:
             )
 
         return notification
+    
+    async def broadcast(
+        self,
+        title: str,
+        body: str,
+        type: NotificationType = NotificationType.SYSTEM,
+        priority: NotificationPriority = NotificationPriority.NORMAL,
+    ):
+        user_ids = await self.user_repository.get_all_user_ids()
+
+        for uid in user_ids:
+            await self.create(
+                user_id=uid,
+                title=title,
+                body=body,
+                type=type,
+                priority=priority,
+                send_push=False,
+            )
+
+        await self.fcm.send_to_topic(
+            topic="all",
+            title=title,
+            body=body,
+            priority="high",
+            data={
+                "type": type.value,
+            },
+        )
 
     async def get_notifications(
         self,
