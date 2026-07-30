@@ -67,7 +67,7 @@ async def ping():
 )
 async def get_notifications(
 
-    limit: int = 20,
+    limit: int = 10000,
 
     start_after: Optional[str] = None,
 
