@@ -239,6 +239,27 @@ async def mark_all_read(
         success=True,
 
     )
+    
+@router.patch("/seen")
+async def mark_seen(
+
+    current_user: dict = Depends(
+        get_current_user,
+    ),
+
+    service: NotificationService = Depends(
+        get_notification_service,
+    ),
+
+):
+
+    await service.mark_seen(
+        current_user["uid"],
+    )
+
+    return ApiResponse(
+        success=True,
+    )
 
 
 @router.delete("/{notification_id}")

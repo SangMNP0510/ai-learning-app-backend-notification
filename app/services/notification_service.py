@@ -20,6 +20,8 @@ from typing import List
 from typing import Dict
 from typing import Optional
 
+from app.config.firebase import db
+
 
 logger = logging.getLogger(__name__)
 
@@ -348,3 +350,12 @@ class NotificationService:
 
             user_id,
         )
+        
+    async def mark_seen(
+        self,
+        user_id: str,
+    ):
+
+        db.collection("users").document(user_id).update({
+            "notification_total": 0,
+        })
