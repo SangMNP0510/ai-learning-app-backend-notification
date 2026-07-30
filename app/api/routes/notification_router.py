@@ -37,6 +37,19 @@ from app.schemas.notification_list_response import (
 from typing import Optional
 from app.config.firebase import db
 
+from pydantic import BaseModel
+
+from app.models.notification_type import NotificationType
+from app.models.notification_priority import NotificationPriority
+from app.models.payment_success_notification_request import PaymentSuccessNotificationRequest
+
+from fastapi import Header, HTTPException
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 def get_notification_service():
 
@@ -402,3 +415,28 @@ async def broadcast(
     return ApiResponse(
         success=True,
     )
+    
+@router.post("/internal/payment-success")
+async def payment_success_notification(
+    request: PaymentSuccessNotificationRequest,
+    service: NotificationService = Depends(get_notification_service),
+    x_internal_key: str = Header(None),
+):
+    if x_internal_key != os.getenv("INTERNAL_API_KEY"):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    package_name = (
+        "Pro Monthly"
+        if request.package == "pro_month"
+        else "Pro Yearly"
+    )
+
+    await service.create(
+        user_id=request.user_id,
+        title="Thanh toán thành công 🎉",
+        body=f"Bạn đã nâng cấp thành công gói {package_name}. Chúc bạn học tập hiệu quả cùng ReStudy!",
+        type=NotificationType.SYSTEM,
+        priority=NotificationPriority.HIGH,
+    )
+
+    return ApiResponse(success=True)
