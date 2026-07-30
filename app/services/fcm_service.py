@@ -239,6 +239,14 @@ class FcmService:
 
                 dry_run=dry_run,
             )
+            
+            for idx, resp in enumerate(response.responses):
+                if not resp.success:
+                    logger.error(
+                        f"Token failed: {tokens[idx]}"
+                    )
+                
+                    logger.error(resp.exception)
 
             self._log_success(
 
