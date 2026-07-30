@@ -35,6 +35,7 @@ from app.schemas.notification_list_response import (
     NotificationListResponse,
 )
 from typing import Optional
+from app.config.firebase import db
 
 
 def get_notification_service():
@@ -154,23 +155,13 @@ async def unread_count(
         get_current_user,
     ),
 
-    service: NotificationService = Depends(
-        get_notification_service,
-    ),
-
 ):
-    print("STEP 1")
 
     user_id = current_user["uid"]
-    print("STEP 2")
 
+    doc = db.collection("users").document(user_id).get()
 
-    count = await service.unread_count(
-
-        user_id,
-
-    )
-    print("STEP 3")
+    data = doc.to_dict() or {}
 
     return ApiResponse(
 
@@ -178,7 +169,15 @@ async def unread_count(
 
         data={
 
-            "count": count,
+            "unread_count": data.get(
+                "notification_unread",
+                0,
+            ),
+
+            "total_count": data.get(
+                "notification_total",
+                0,
+            ),
 
         },
 

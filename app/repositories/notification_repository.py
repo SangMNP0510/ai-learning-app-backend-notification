@@ -54,6 +54,9 @@ class NotificationRepository:
 
         if "notification_initialized" not in data:
             updates["notification_initialized"] = False
+            
+        if "notification_total" not in data:
+            updates["notification_total"] = 0
 
         if updates:
             user_ref.set(
@@ -109,6 +112,7 @@ class NotificationRepository:
         user_ref.set(
             {
                 "notification_unread": firestore.Increment(1),
+                "notification_total": firestore.Increment(1),
                 "notification_initialized": True,
             },
             merge=True,
@@ -287,9 +291,8 @@ class NotificationRepository:
             user_id,
         ).set(
             {
-                "notification_unread": firestore.Increment(
-                    1,
-                ),
+                "notification_unread": firestore.Increment(1),
+                "notification_total": firestore.Increment(1),
             },
             merge=True,
         )
