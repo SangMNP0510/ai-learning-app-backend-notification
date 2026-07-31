@@ -94,7 +94,7 @@ class NotificationRepository:
         doc.set(
             {
                 "user_id": user_id,
-                "title": "Chào mừng đến với Learnix",
+                "title": "Chào mừng đến với RiStudy",
                 "body": "Cảm ơn bạn đã sử dụng ứng dụng.",
                 "type": "SYSTEM",
                 "priority": "NORMAL",

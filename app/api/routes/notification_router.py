@@ -434,7 +434,7 @@ async def payment_success_notification(
     await service.create(
         user_id=request.user_id,
         title="Thanh toán thành công 🎉",
-        body=f"Bạn đã nâng cấp thành công gói {package_name}. Chúc bạn học tập hiệu quả cùng ReStudy!",
+        body=f"Bạn đã nâng cấp thành công gói {package_name}. Chúc bạn học tập hiệu quả cùng RiStudy!",
         type=NotificationType.SYSTEM,
         priority=NotificationPriority.HIGH,
     )
